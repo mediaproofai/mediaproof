@@ -21,6 +21,12 @@ export default function Home() {
     }, 1500);
   };
 
+  const getScoreColor = (score) => {
+    if (score > 75) return "text-green-400";
+    if (score > 50) return "text-yellow-400";
+    return "text-red-400";
+  };
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center px-4 relative overflow-hidden">
 
@@ -34,18 +40,18 @@ export default function Home() {
           Mediaproof
         </h1>
         <p className="text-gray-400 mt-4 text-sm">
-          Investigate credibility, detect manipulation signals, and understand context — without false certainty
+          Analyze credibility, detect manipulation signals, and evaluate context — without false certainty
         </p>
       </div>
 
-      {/* Input Card */}
+      {/* Input */}
       <div className="w-full max-w-3xl mt-12 relative z-10">
         <div className="bg-[#111]/80 backdrop-blur-xl border border-[#222] rounded-2xl p-6 shadow-lg">
 
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Paste a claim, URL, or headline..."
+            placeholder="Paste a claim, article, post, or describe the media content..."
             className="w-full h-32 bg-transparent border border-[#222] rounded-xl p-4 text-sm outline-none focus:border-gray-500 transition resize-none"
           />
 
@@ -62,69 +68,91 @@ export default function Home() {
       {/* Loading */}
       {loading && (
         <div className="mt-10 text-gray-400 text-sm animate-pulse">
-          Analyzing content...
+          Running multi-layer analysis...
         </div>
       )}
 
       {/* Results */}
       {result && !loading && (
-        <div className="w-full max-w-4xl mt-16 grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+        <div className="w-full max-w-5xl mt-16 space-y-6 relative z-10">
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
+          {/* Trust Score Panel */}
+          <div className="bg-[#111]/70 border border-[#222] rounded-2xl p-8 text-center">
+            <p className="text-gray-400 text-xs mb-2">TRUST SCORE</p>
+            <p className={`text-6xl font-semibold ${getScoreColor(result.trustScore)}`}>
+              {result.trustScore}
+            </p>
+            <p className="text-gray-500 text-xs mt-2">
+              Probabilistic credibility estimate
+            </p>
+          </div>
+
+          {/* Summary */}
+          <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
             <p className="text-gray-400 text-xs mb-2">SUMMARY</p>
             <p className="text-sm text-gray-200">{result.summary}</p>
           </div>
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">TRUST SCORE</p>
-            <p className="text-3xl font-semibold">{result.trustScore}/100</p>
+          {/* Signals Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
+              <p className="text-gray-400 text-xs mb-1">EMOTIONAL TONE</p>
+              <p className="text-sm">{result.emotionalTone}</p>
+            </div>
+
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
+              <p className="text-gray-400 text-xs mb-1">AI INVOLVEMENT</p>
+              <p className="text-sm">{result.aiLikelihood}</p>
+            </div>
+
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
+              <p className="text-gray-400 text-xs mb-1">SOURCE RELIABILITY</p>
+              <p className="text-sm">{result.sourceReliability}</p>
+            </div>
+
           </div>
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">EMOTIONAL TONE</p>
-            <p className="text-sm">{result.emotionalTone}</p>
+          {/* Supporting vs Contradicting */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">SUPPORTING SIGNALS</p>
+              <ul className="text-sm list-disc ml-4 space-y-1">
+                {result.supporting.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">CONTRADICTING SIGNALS</p>
+              <ul className="text-sm list-disc ml-4 space-y-1">
+                {result.contradicting.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
           </div>
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">AI LIKELIHOOD</p>
-            <p className="text-sm">{result.aiLikelihood}</p>
-          </div>
+          {/* Context + Explanation */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">SOURCE RELIABILITY</p>
-            <p className="text-sm">{result.sourceReliability}</p>
-          </div>
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">CONTEXT WARNINGS</p>
+              <ul className="text-sm list-disc ml-4 space-y-1">
+                {result.contextWarnings.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">CONTEXT WARNINGS</p>
-            <ul className="text-sm list-disc ml-4">
-              {result.contextWarnings.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
+            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">WHY THIS SCORE</p>
+              <p className="text-sm text-gray-300">{result.explanation}</p>
+            </div>
 
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">SUPPORTING SIGNALS</p>
-            <ul className="text-sm list-disc ml-4">
-              {result.supporting.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60">
-            <p className="text-gray-400 text-xs mb-2">CONTRADICTING SIGNALS</p>
-            <ul className="text-sm list-disc ml-4">
-              {result.contradicting.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="border border-[#222] rounded-xl p-5 bg-[#111]/60 md:col-span-2">
-            <p className="text-gray-400 text-xs mb-2">WHY THIS SCORE</p>
-            <p className="text-sm text-gray-300">{result.explanation}</p>
           </div>
 
         </div>
