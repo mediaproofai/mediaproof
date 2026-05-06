@@ -28,31 +28,28 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center px-4 relative overflow-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center px-4">
 
-      <div className="absolute w-[500px] h-[500px] bg-purple-600/20 blur-[120px] top-[-100px] left-[-100px]" />
-      <div className="absolute w-[400px] h-[400px] bg-blue-600/20 blur-[120px] bottom-[-100px] right-[-100px]" />
-
-      <div className="w-full max-w-4xl mt-24 text-center relative z-10">
+      <div className="w-full max-w-4xl mt-24 text-center">
         <h1 className="text-5xl font-semibold">Mediaproof</h1>
         <p className="text-gray-400 mt-4 text-sm">
-          Signal-based media credibility analysis with transparent reasoning
+          Trace origin, detect spread patterns, and evaluate credibility signals
         </p>
       </div>
 
-      <div className="w-full max-w-3xl mt-12 relative z-10">
-        <div className="bg-[#111]/80 border border-[#222] rounded-2xl p-6 backdrop-blur-xl">
+      <div className="w-full max-w-3xl mt-12">
+        <div className="bg-[#111] border border-[#222] rounded-2xl p-6">
 
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Paste a claim, article, or URL..."
-            className="w-full h-32 bg-transparent border border-[#222] rounded-xl p-4 text-sm outline-none focus:border-gray-500"
+            placeholder="Paste a claim, URL, or describe the media..."
+            className="w-full h-32 bg-transparent border border-[#222] rounded-xl p-4 text-sm outline-none"
           />
 
           <button
             onClick={handleAnalyze}
-            className="mt-4 w-full bg-gradient-to-r from-white to-gray-300 text-black py-3 rounded-xl font-medium"
+            className="mt-4 w-full bg-white text-black py-3 rounded-xl font-medium"
           >
             Analyze
           </button>
@@ -62,40 +59,50 @@ export default function Home() {
 
       {loading && (
         <div className="mt-10 text-gray-400 text-sm animate-pulse">
-          Analyzing signals...
+          Mapping origin and spread patterns...
         </div>
       )}
 
       {result && !loading && (
         <div className="w-full max-w-5xl mt-16 space-y-6">
 
-          <div className="bg-[#111]/70 border border-[#222] rounded-2xl p-8 text-center">
-            <p className="text-gray-400 text-xs mb-2">TRUST SCORE</p>
+          {/* Score */}
+          <div className="bg-[#111] border border-[#222] rounded-2xl p-8 text-center">
+            <p className="text-gray-400 text-xs">TRUST SCORE</p>
             <p className={`text-6xl font-semibold ${getScoreColor(result.trustScore)}`}>
               {result.trustScore}
             </p>
           </div>
 
-          <div className="bg-[#111]/60 border border-[#222] rounded-xl p-5">
-            <p className="text-gray-400 text-xs mb-2">SUMMARY</p>
-            <p className="text-sm">{result.summary}</p>
+          {/* Origin + Spread */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-[#111] border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">ORIGIN CONFIDENCE</p>
+              <p>{result.originConfidence}</p>
+            </div>
+
+            <div className="bg-[#111] border border-[#222] rounded-xl p-5">
+              <p className="text-gray-400 text-xs mb-2">SPREAD PATTERN</p>
+              <p>{result.spreadPattern}</p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
-              <p className="text-gray-400 text-xs">EMOTIONAL TONE</p>
-              <p>{result.emotionalTone}</p>
-            </div>
+          {/* Source */}
+          <div className="bg-[#111] border border-[#222] rounded-xl p-5">
+            <p className="text-gray-400 text-xs mb-2">SOURCE RELIABILITY</p>
+            <p>{result.sourceReliability}</p>
+          </div>
 
-            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
-              <p className="text-gray-400 text-xs">AI SIGNAL</p>
-              <p>{result.aiLikelihood}</p>
-            </div>
+          {/* Summary */}
+          <div className="bg-[#111] border border-[#222] rounded-xl p-5">
+            <p className="text-gray-400 text-xs mb-2">SUMMARY</p>
+            <p>{result.summary}</p>
+          </div>
 
-            <div className="bg-[#111]/60 border border-[#222] rounded-xl p-4">
-              <p className="text-gray-400 text-xs">SOURCE</p>
-              <p>{result.sourceReliability}</p>
-            </div>
+          {/* Explanation */}
+          <div className="bg-[#111] border border-[#222] rounded-xl p-5">
+            <p className="text-gray-400 text-xs mb-2">WHY THIS ANALYSIS</p>
+            <p>{result.explanation}</p>
           </div>
 
         </div>
