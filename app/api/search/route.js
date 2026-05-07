@@ -10,18 +10,15 @@ export async function POST(req) {
 
     const results = [];
 
-    // Main abstract
     if (data.AbstractText) {
       results.push({
         title: "Summary",
-        snippet: data.AbstractText,
-        source: data.AbstractSource
+        snippet: data.AbstractText
       });
     }
 
-    // Related topics
     if (data.RelatedTopics) {
-      data.RelatedTopics.slice(0, 5).forEach((item) => {
+      data.RelatedTopics.slice(0, 6).forEach((item) => {
         if (item.Text) {
           results.push({
             title: item.FirstURL || "Related",
@@ -33,7 +30,7 @@ export async function POST(req) {
 
     return Response.json({ results });
 
-  } catch (err) {
+  } catch {
     return Response.json({ results: [] });
   }
 }
